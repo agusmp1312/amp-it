@@ -526,6 +526,17 @@ class _ConnectionPageState extends State<ConnectionPage>
                   ),
                 ),
                 const SizedBox(width: 8),
+                SizedBox(
+                  height: 28.0,
+                  child: OutlinedButton.icon(
+                    onPressed: () {
+                      onConnect(isFileTransfer: true);
+                    },
+                    icon: const Icon(Icons.folder_open, size: 16),
+                    label: const Text('Transfer file'),
+                  ),
+                ),
+                const SizedBox(width: 8),
                 Container(
                   height: 28.0,
                   width: 28.0,
