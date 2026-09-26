@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hbb/common.dart';
+import 'package:flutter_hbb/custom_logo.dart';
 import 'package:flutter_hbb/common/widgets/audio_input.dart';
 import 'package:flutter_hbb/common/widgets/setting_widgets.dart';
 import 'package:flutter_hbb/consts.dart';
@@ -417,6 +418,7 @@ class _GeneralState extends State<_General> {
       children: [
         if (!isWeb) service(),
         theme(),
+        customLogo(),
         _Card(title: 'Language', children: [language()]),
         if (!isWeb) hwcodec(),
         if (!isWeb) audio(context),
@@ -451,6 +453,35 @@ class _GeneralState extends State<_General> {
           groupValue: current,
           label: 'Follow System',
           onChanged: isOptFixed ? null : onChanged),
+    ]);
+  }
+
+  Widget customLogo() {
+    final current = getCustomLogoPath();
+    return _Card(title: 'Logo', children: [
+      Row(children: [
+        Expanded(
+          child: Text(
+            current.isEmpty ? 'Logo original' : current,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        TextButton(
+          onPressed: () async {
+            final p = await pickCustomLogoImage();
+            if (p != null) setState(() {});
+          },
+          child: const Text('Elegir…'),
+        ),
+        if (current.isNotEmpty)
+          TextButton(
+            onPressed: () async {
+              await setCustomLogoPath('');
+              setState(() {});
+            },
+            child: const Text('Quitar'),
+          ),
+      ]),
     ]);
   }
 

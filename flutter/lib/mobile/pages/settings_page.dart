@@ -12,6 +12,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../common.dart';
+import '../../custom_logo.dart';
 import '../../common/widgets/dialog.dart';
 import '../../common/widgets/login.dart';
 import '../../consts.dart';
@@ -722,6 +723,12 @@ class _SettingsState extends State<SettingsPage> with WidgetsBindingObserver {
                     setState(callback);
                   });
                 }),
+          SettingsTile(
+              title: Text('Logo'),
+              leading: Icon(Icons.image),
+              onPressed: (context) {
+                showLogoSettings(gFFI.dialogManager);
+              }),
           if (!_hideNetwork && !_hideProxy)
             SettingsTile(
                 title: Text(translate('Socks5/Http(s) Proxy')),
@@ -1060,6 +1067,50 @@ void showLanguageSettings(OverlayDialogManager dialogManager) async {
   } catch (e) {
     //
   }
+}
+
+void showLogoSettings(OverlayDialogManager dialogManager) {
+  var current = getCustomLogoPath();
+  dialogManager.show((setState, close, context) {
+    return CustomAlertDialog(
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(current.isEmpty ? 'Logo original' : current,
+              overflow: TextOverflow.ellipsis),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              TextButton(
+                onPressed: () async {
+                  final p = await pickCustomLogoImage();
+                  if (p != null) {
+                    setState(() {
+                      current = p;
+                    });
+                    HomePage.homeKey.currentState?.refreshPages();
+                  }
+                },
+                child: const Text('Elegir…'),
+              ),
+              if (current.isNotEmpty)
+                TextButton(
+                  onPressed: () async {
+                    await setCustomLogoPath('');
+                    setState(() {
+                      current = '';
+                    });
+                    HomePage.homeKey.currentState?.refreshPages();
+                  },
+                  child: const Text('Quitar'),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }, backDismiss: true, clickMaskDismiss: true);
 }
 
 void showThemeSettings(OverlayDialogManager dialogManager) async {

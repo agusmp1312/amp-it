@@ -30,6 +30,8 @@ import 'package:window_size/window_size.dart' as window_size;
 
 import '../consts.dart';
 import 'common/widgets/overlay.dart';
+import 'custom_logo.dart'
+    if (dart.library.html) 'custom_logo_web.dart';
 import 'mobile/pages/file_manager_page.dart';
 import 'mobile/pages/remote_page.dart';
 import 'mobile/pages/view_camera_page.dart';
@@ -579,7 +581,9 @@ class MyTheme {
   );
 
   static ThemeMode getThemeModePreference() {
-    return themeModeFromString(bind.mainGetLocalOption(key: kCommConfKeyTheme));
+    final v = bind.mainGetLocalOption(key: kCommConfKeyTheme);
+    if (v.isEmpty) return ThemeMode.dark; // AMP-IT: oscuro por defecto
+    return themeModeFromString(v);
   }
 
   static Future<void> changeDarkMode(ThemeMode mode) async {
@@ -3801,6 +3805,13 @@ class _LogoState extends State<_Logo> {
 
   @override
   Widget build(BuildContext context) {
+    final custom = buildCustomLogoWidget();
+    if (custom != null) {
+      return Container(
+        constraints: BoxConstraints(maxWidth: 300, maxHeight: 60),
+        child: custom,
+      ).marginOnly(left: 12, right: 12, top: 12);
+    }
     return FutureBuilder<String?>(
       future: _logoFutureFor(Theme.of(context).brightness),
       builder: (BuildContext context, AsyncSnapshot<String?> snapshot) {
