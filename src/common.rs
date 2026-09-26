@@ -2081,6 +2081,23 @@ pub fn rustdesk_interval(i: Interval) -> ThrottledInterval {
 }
 
 pub fn load_custom_client() {
+    // AMP-IT: marca propia y servidor NAS por defecto (solo primera vez;
+    // el usuario puede cambiarlos en Ajustes y no se pisan mas).
+    *config::APP_NAME.write().unwrap() = "AMP-IT".to_owned();
+    if Config::get_option("amp-it-seeded") != "1"
+        && Config::get_option("custom-rendezvous-server").is_empty()
+        && Config::get_option("key").is_empty()
+    {
+        Config::set_option(
+            "custom-rendezvous-server".to_owned(),
+            "agusmp.duckdns.org".to_owned(),
+        );
+        Config::set_option(
+            "key".to_owned(),
+            "qlTgZk6Ciz6m1P2wN42Pc+6sNHcRWif6Pk8IheLPmzE=".to_owned(),
+        );
+        Config::set_option("amp-it-seeded".to_owned(), "1".to_owned());
+    }
     #[cfg(debug_assertions)]
     if let Ok(data) = std::fs::read_to_string("./custom.txt") {
         read_custom_client(data.trim());
