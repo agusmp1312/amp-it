@@ -351,6 +351,7 @@ jobs:
         if: env.UPLOAD_ARTIFACT == 'true'
         run: |
           pushd ./res/msi
+          move ../../rustdesk/rustdesk.exe ../../rustdesk/AMP-IT.exe
           python preprocess.py --arp --app-name AMP-IT --manufacturer AMP-IT -d ../../rustdesk
           nuget restore msi.sln
           $msiPlatform = if ('${{ matrix.job.arch }}' -eq 'aarch64') { 'ARM64' } else { 'x64' }
